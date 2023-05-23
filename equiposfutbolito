@@ -1,0 +1,63 @@
+# Mejor diferencia inicializada a infinito para poder minimizarla
+mejor_diferencia = float('inf')
+# Los mejores equipos inicializados a vacío
+mejor_equipo1 = []
+mejor_equipo2 = []
+
+# Función para calcular el total de los atributos de los jugadores en un equipo
+def calcular_total_atributos(equipo):
+    total = 0
+    for jugador in equipo:
+        total += jugador['resistencia'] + jugador['regate'] + jugador['pase'] + jugador['velocidad']
+    return total
+
+# Función de backtracking para formar equipos
+def formar_equipos(jugadores, equipo1=[], equipo2=[]):
+    global mejor_diferencia, mejor_equipo1, mejor_equipo2
+
+    # Si algún equipo tiene más de 6 jugadores, no seguimos explorando esa opción
+    if len(equipo1) > 6 or len(equipo2) > 6:
+        return
+
+    # Si no hay más jugadores para asignar
+    if len(jugadores) == 0:
+        if len(equipo1) == 6 and len(equipo2) == 6:
+            # Calculamos la diferencia de atributos entre los equipos
+            diferencia = abs(calcular_total_atributos(equipo1) - calcular_total_atributos(equipo2))
+            # Si la diferencia es menor que la mejor encontrada hasta ahora
+            if diferencia < mejor_diferencia:
+                # Actualizamos la mejor diferencia y los mejores equipos
+                mejor_diferencia = diferencia
+                mejor_equipo1 = list(equipo1)
+                mejor_equipo2 = list(equipo2)
+        return
+    # Tomamos el primer jugador que queda por asignar
+    jugador = jugadores[0]
+    # Intentamos ponerlo en el equipo 1
+    equipo1.append(jugador)
+    formar_equipos(jugadores[1:], equipo1, equipo2)
+    equipo1.pop() # Quitamos al jugador del equipo 1 (backtracking)
+
+    # Intentamos ponerlo en el equipo 2
+    equipo2.append(jugador)
+    formar_equipos(jugadores[1:], equipo1, equipo2)
+    equipo2.pop() # Quitamos al jugador del equipo 2 (backtracking)
+
+jugadores = [
+    {'nombre': 'Jugador 1', 'resistencia': 1, 'regate': 1, 'pase': 1, 'velocidad': 1}, 
+    {'nombre': 'Jugador 2', 'resistencia': 1, 'regate': 1, 'pase': 1, 'velocidad': 1},
+    {'nombre': 'Jugador 3', 'resistencia': 1, 'regate': 1, 'pase': 1, 'velocidad': 1},
+    {'nombre': 'Jugador 4', 'resistencia': 1, 'regate': 1, 'pase': 1, 'velocidad': 1},
+    {'nombre': 'Jugador 5', 'resistencia': 1, 'regate': 1, 'pase': 1, 'velocidad': 1},
+    {'nombre': 'Jugador 6', 'resistencia': 8, 'regate': 9, 'pase': 7, 'velocidad': 6},
+    {'nombre': 'Jugador 7', 'resistencia': 7, 'regate': 1, 'pase': 9, 'velocidad': 8},
+    {'nombre': 'Jugador 8', 'resistencia': 9, 'regate': 7, 'pase': 1, 'velocidad': 6},
+    {'nombre': 'Jugador 9', 'resistencia': 6, 'regate': 1, 'pase': 7, 'velocidad': 9},
+    {'nombre': 'Jugador 10', 'resistencia': 7, 'regate': 9, 'pase': 6, 'velocidad': 10},
+    {'nombre': 'Jugador 11', 'resistencia': 1, 'regate': 7, 'pase': 9, 'velocidad': 8},
+    {'nombre': 'Jugador 12', 'resistencia': 1, 'regate': 1, 'pase': 1, 'velocidad': 1}
+]
+
+formar_equipos(jugadores)
+print("Equipo 1:", [jugador['nombre'] for jugador in mejor_equipo1])
+print("Equipo 2:", [jugador['nombre'] for jugador in mejor_equipo2])
